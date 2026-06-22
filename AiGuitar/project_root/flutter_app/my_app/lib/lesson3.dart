@@ -1,0 +1,239 @@
+import 'package:flutter/material.dart';
+import 'homepage.dart';
+import 'settings.dart';
+import 'lesson3_2.dart'; // ← 下一頁
+import 'flip_page_route.dart';
+import 'tuner.dart';
+import 'chordchart.dart';
+import 'member.dart';
+
+class Lesson3Page extends StatelessWidget {
+  const Lesson3Page({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    const double navIcon = 50;
+
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            // 內容
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 100),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // ← 左：兩張圖片，往下 48
+                  Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 150),
+                      child: Row(
+                        children: [
+                          // C.png
+                          Expanded(
+                            child: AspectRatio(
+                              aspectRatio: 1, // 保持方形
+                              child: Image.asset(
+                                'assets/chords/G.png',
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 0), // 兩張圖之間的間距
+                          // Cadd9.png
+                          Expanded(
+                            child: AspectRatio(
+                              aspectRatio: 1,
+                              child: Image.asset(
+                                'assets/chords/Cadd9.png',
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // → 右：文字，往下 96
+                  Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 96),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          SizedBox(height: 8),
+                          Text(
+                            '和弦轉換',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 40,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          SizedBox(height: 12),
+                          _BulletText('這一單元要練習和弦轉換，先練習幾個基本和弦'),
+                          SizedBox(height: 6),
+                          _BulletText('首先是G→Cadd9'),
+                          SizedBox(height: 16),
+                          Text(
+                            '中指從 6 弦 3 品移到 5 弦 3 品、食指從 5 弦 2 品移到 4 弦 2 品，並用中指側面悶住 6 弦;反向 Cadd9→G 則把中指與食指原路移回',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 16,
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // 右上設定
+            Positioned(
+              top: 20,
+              right: 20,
+              child: GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SettingsPage()),
+                ),
+                child: Image.asset('assets/images/Setting.png', width: 50),
+              ),
+            ),
+
+            // 右下：下一頁箭頭（用圖片 arrow r.png）
+            Positioned(
+              right: 24,
+              bottom: 110,
+              child: IconButton(
+                iconSize: 36,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    FlipPageRoute(child: const Lesson3Page2()),
+                  );
+                },
+                icon: Image.asset(
+                  'assets/images/arrow r.png',
+                  width: 36,
+                  height: 36,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+
+      // 底部導覽列
+      bottomNavigationBar: Container(
+        height: 80,
+        color: Colors.black,
+        child: Row(
+          children: [
+            // Home
+            _NavItem(
+              img: 'assets/images/home.png',
+              size: navIcon,
+              onTap: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const HomePage()),
+                  (route) => false,
+                );
+              },
+            ),
+            // Tuner
+            _NavItem(
+              img: 'assets/images/tuner.png',
+              size: navIcon,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const GvTunerPage()),
+                );
+              },
+            ),
+            // Chord Chart
+            _NavItem(
+              img: 'assets/images/chordchart.png',
+              size: navIcon,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ChordChart()),
+                );
+              },
+            ),
+            // Member
+            _NavItem(
+              img: 'assets/images/member.png',
+              size: navIcon,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const MemberPage()),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 子彈點文字
+class _BulletText extends StatelessWidget {
+  final String text;
+  const _BulletText(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          '•  ',
+          style: TextStyle(color: Colors.white, fontSize: 16, height: 1.4),
+        ),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              height: 1.4,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// 底部導覽列項目
+class _NavItem extends StatelessWidget {
+  final String img;
+  final double size;
+  final VoidCallback? onTap;
+  const _NavItem({required this.img, required this.size, this.onTap});
+
+  @override
+  Widget build(BuildContext context) => Expanded(
+        child: InkWell(
+          onTap: onTap,
+          child: Center(child: Image.asset(img, width: size)),
+        ),
+      );
+}
